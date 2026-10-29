@@ -32,3 +32,20 @@ def read_conll_tsv(path: Path):
             else:
                 parts = line.split()
                 tok, tag = parts[0], parts[-1]
+            tokens.append(tok)
+            tags.append(tag)
+    if tokens:
+        docs.append((tokens, tags))
+    return docs
+
+
+def tokens_with_offsets(tokens, joiner=" "):
+    """Return (text, [(char_start, char_end)]) — offsets injoined spaces."""
+    spans = []
+    offset = 0
+    for i, t in enumerate(tokens):
+        spans.append((offset, offset + len(t)))
+        offset += len(t) + len(joiner)
+    return joiner.join(tokens), spans
+
+
