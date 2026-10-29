@@ -13,3 +13,22 @@ def read_conll_tsv(path: Path):
     """
     docs = []
     tokens, tags = [], []
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            line = line.rstrip("\n")
+            if not line:
+                if tokens:
+                    docs.append((tokens, tags))
+                    tokens, tags = [], []
+                continue
+            if line.startswith("#"):
+                continue
+            if "\t" in line:
+                fields = line.split("\t")
+                if len(fields) >= 4:
+                    tok, tag = fields[0], fields[-1]
+                else:
+                    tok, tag = fields[0], fields[1]
+            else:
+                parts = line.split()
+                tok, tag = parts[0], parts[-1]
