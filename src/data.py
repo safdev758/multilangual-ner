@@ -49,3 +49,20 @@ def tokens_with_offsets(tokens, joiner=" "):
     return joiner.join(tokens), spans
 
 
+def to_io_tuple(tagged_doc):
+    tokens, tags = tagged_doc
+    text, spans = tokens_with_offsets(tokens)
+    ents = []
+    for (s, e), tag in zip(spans, tags):
+        if tag.startswith("B-") or tag.startswith("I-"):
+            ents.append((s, e, tag[2:]))
+    return (text, ents)
+
+
+def make_nlp(blank_proj=True):
+    nlp = spacy.blank("en")  # universal entidad/blank tokenizer separately per code-switch group
+    return nlp
+
+
+def create_config(lang, stage_dict):
+    raise NotImplementedError
