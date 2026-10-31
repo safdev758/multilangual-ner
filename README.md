@@ -21,3 +21,4 @@ Full per-type tables: `output/run9/output/metrics.json`.
 ```
 src/data.py          read_conll_tsv, to_io_tuple, tokens_with_offsets
 src/train_ner.py     DocBin build + spaCy NER training
+src/language.py      rule-based detect_language
