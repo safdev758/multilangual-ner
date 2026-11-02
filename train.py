@@ -47,3 +47,19 @@ def main():
         print(f"[LANG-{lang}] train={len(tr)} dev={len(dv)}")
         all_train_texts += [t for t, _ in tr]
         all_train_ents += [e for _, e in tr]
+        dev_pairs.append((lang, dv))
+        eval_pairs.append((lang, dev_file))
+    to_docbin(all_train_texts, all_train_ents, work / "train.spacy")
+    dev_all = []
+    for lang, dv in dev_pairs:
+        dev_all += [g for _, g in dv]
+    to_docbin([t for t, _ in sum([list(dv) for _, dv in dev_pairs], [])], dev_all, work / "dev.spacy")
+    nlp = train_multiner(work / "train.spacy", work / "dev.spacy", work / "multiner", epochs=args.epochs)
+    per_lang = {}
+    metrics_by_lang = {}
+    for lang, dv in dev_pairs:
+        texts = [t for t, _ in dv]
+        golds = [list(g) for _, g in dv]
+        pred = extract_ents(nlp, texts)
+        rep = evaluate_ents(pred, golds)
+        rep["detect_lang_counts"] = {l: sum(1 for t in texts if detect_language(t) == l) for l in ("en", "fr", "ar", "other")}
