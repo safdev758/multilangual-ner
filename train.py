@@ -63,3 +63,20 @@ def main():
         pred = extract_ents(nlp, texts)
         rep = evaluate_ents(pred, golds)
         rep["detect_lang_counts"] = {l: sum(1 for t in texts if detect_language(t) == l) for l in ("en", "fr", "ar", "other")}
+        per_lang[lang] = rep["micro"]
+        print(f"[NER-EVAL] lang={lang} {rep['micro']}")
+        print(f"[LANG-DETECT] {lang} distribution={rep.get('detect_lang_counts')}")
+        metrics_by_lang[lang] = rep
+
+    Path("output").mkdir(parents=True, exist_ok=True)
+    Path("output/metrics.json").write_text(json.dumps(metrics_by_lang, indent=2))
+    print("FINAL:", json.dumps(metrics_by_lang))
+
+
+def to_io_pair(tagged_doc):
+    from src.data import to_io_tuple
+    return to_io_tuple(tagged_doc)
+
+
+if __name__ == "__main__":
+    main()
