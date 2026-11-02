@@ -30,3 +30,20 @@ def find_files(base, lang):
     return train, dev
 
 
+def main():
+    args = parse_args()
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    base = Path(args.data_root) if args.data_root else Path("/kaggle/input")
+    print(f"[ENV] device={device} langs={args.langs}")
+    work = Path("data_multiner"); work.mkdir(exist_ok=True)
+    all_train_texts, all_train_ents, dev_pairs, eval_pairs = [], [], [], []
+    for lang in args.langs:
+        train_file, dev_file = find_files(base, lang)
+        if train_file is None or dev_file is None:
+            print(f"[LANG] missing conll for {lang}; skipping")
+            continue
+        tr = [to_io_pair(d) for d in read_conll_tsv(train_file)]
+        dv = [to_io_pair(d) for d in read_conll_tsv(dev_file)]
+        print(f"[LANG-{lang}] train={len(tr)} dev={len(dv)}")
+        all_train_texts += [t for t, _ in tr]
+        all_train_ents += [e for _, e in tr]
