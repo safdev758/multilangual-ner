@@ -23,3 +23,5 @@ src/data.py          read_conll_tsv, to_io_tuple, tokens_with_offsets
 src/train_ner.py     DocBin build + spaCy NER training
 src/language.py      rule-based detect_language
 src/evaluation.py    per-type micro eval (copied from document project)
+tests/               unit tests (conll parsing, docbin alignment)
+```

@@ -1,0 +1,17 @@
+{
+  "id": "khentitsafouaneamine/multilingual-ner-v9",
+  "title": "Multilingual NER v9",
+  "code_file": "runner.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "dataset_sources": [
+    "cryptexcode/multiconer-2"
+  ],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}
