@@ -25,3 +25,7 @@ src/language.py      rule-based detect_language
 src/evaluation.py    per-type micro eval (copied from document project)
 tests/               unit tests (conll parsing, docbin alignment)
 ```
+
+## Kaggle
+Kernel: `multilingual-ner-v9` (GPU, dataset `cryptexcode/multiconer-2`).
+
