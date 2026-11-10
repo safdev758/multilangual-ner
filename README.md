@@ -29,3 +29,9 @@ tests/               unit tests (conll parsing, docbin alignment)
 ## Kaggle
 Kernel: `multilingual-ner-v9` (GPU, dataset `cryptexcode/multiconer-2`).
 
+## MLflow
+Experiment `multilingual-ner_training`.
+
+## Notes / limits
+- Transformer (CamemBERT/BERT) replaces this tok2vec baseline in the next iteration; the conll→DocBin and eval layers stay identical.
+- Zero-width alignment handled via `alignment_mode="expand"` + zero-ents guard.
