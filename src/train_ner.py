@@ -53,3 +53,28 @@ def to_docbin(texts, ents, out_path: Path):
         spacy_ents = []
         for s, e, l in ents_i:
             span = doc.char_span(s, e, alignment_mode="expand", label=l)
+            if span is None:
+                continue
+            spacy_ents.append(span)
+        if spacy_ents:
+            doc.ents = spacy_ents
+            n_with_ents += 1
+        db.add(doc)
+    if n_with_ents == 0:
+        raise SystemExit("to_docbin produced zero docs with entities; offsets are broken")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    db.to_disk(out_path)
+    return out_path
+
+
+def train_multiner(train_docbin: Path, dev_docbin: Path, output_dir: Path, epochs=10):
+    config = init_config(lang="en", pipeline=["tok2vec", "ner"], optimize="efficiency")
+    config["paths"]["train"] = str(train_docbin)
+    config["paths"]["dev"] = str(dev_docbin)
+    config["training"]["max_epochs"] = epochs
+    config["training"]["patience"] = 10 ** 9
+    output_dir.mkdir(parents=True, exist_ok=True)
+    cfg_path = output_dir / "multiner_config.cfg"
+    cfg_path.write_text(Config(config).to_str())
+    spacy_train(str(cfg_path), str(output_dir))
+    return spacy.load(output_dir / "model-best")

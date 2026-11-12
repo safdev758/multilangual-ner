@@ -41,3 +41,24 @@ def evaluate_ents(doc_ents_list, gold_ents_list):
     }
 
 
+def extract_ents(nlp, texts, labels_offset=()):
+    """Runs the pipeline, returns list of (start, end, label) tuples per doc."""
+    out = []
+    for text in texts:
+        doc = nlp(text)
+        out.append([(e.start_char, e.end_char, e.label_) for e in doc.ents])
+    return out
+
+
+def merge_hybrid(ner_ents_list, ruler_ents_list):
+    """NER wins overlaps; ruler fills unmatched gaps (its strength: rare/strict formats)."""
+    merged = []
+    for ner, ruler in zip(ner_ents_list, ruler_ents_list):
+        ents = list(ner)
+        ner_spans = [(s, e) for s, e, _ in ner]
+        for s, e, l in ruler:
+            if not any(not (e <= rs or s >= re_) for rs, re_ in ner_spans):
+                ents.append((s, e, l))
+        ents.sort()
+        merged.append(ents)
+    return merged
